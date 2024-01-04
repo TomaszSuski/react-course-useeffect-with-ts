@@ -1,4 +1,11 @@
-export default function DeleteConfirmation({ onConfirm, onCancel }) {
+import React from "react";
+
+export interface DeleteConfirmationProps {
+  onConfirm: () => void;
+  onCancel: () => void;
+}
+
+export default function DeleteConfirmation({ onConfirm, onCancel }: DeleteConfirmationProps) {
   return (
     <div id="delete-confirmation">
       <h2>Are you sure?</h2>
