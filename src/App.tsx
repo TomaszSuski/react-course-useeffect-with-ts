@@ -1,17 +1,18 @@
+import React from 'react';
 import { useRef, useState } from 'react';
-
-import Places from './components/Places.jsx';
-import { AVAILABLE_PLACES } from './data.js';
-import Modal from './components/Modal.jsx';
-import DeleteConfirmation from './components/DeleteConfirmation.jsx';
+import { Place } from './models/Place';
+import Places from './components/Places';
+import { AVAILABLE_PLACES } from './data';
+import Modal from './components/Modal';
+import DeleteConfirmation from './components/DeleteConfirmation';
 import logoImg from './assets/logo.png';
 
 function App() {
-  const modal = useRef();
-  const selectedPlace = useRef();
-  const [pickedPlaces, setPickedPlaces] = useState([]);
+  const modal = useRef<any>(null);
+  const selectedPlace = useRef<any>(null);
+  const [pickedPlaces, setPickedPlaces] = useState<Place[]>([]);
 
-  function handleStartRemovePlace(id) {
+  function handleStartRemovePlace(id: string) {
     modal.current.open();
     selectedPlace.current = id;
   }
@@ -20,12 +21,15 @@ function App() {
     modal.current.close();
   }
 
-  function handleSelectPlace(id) {
+  function handleSelectPlace(id: string) {
     setPickedPlaces((prevPickedPlaces) => {
       if (prevPickedPlaces.some((place) => place.id === id)) {
         return prevPickedPlaces;
       }
       const place = AVAILABLE_PLACES.find((place) => place.id === id);
+      if (!place) {
+        return prevPickedPlaces;
+      }
       return [place, ...prevPickedPlaces];
     });
   }
@@ -45,7 +49,6 @@ function App() {
           onConfirm={handleRemovePlace}
         />
       </Modal>
-
       <header>
         <img src={logoImg} alt="Stylized globe" />
         <h1>PlacePicker</h1>
