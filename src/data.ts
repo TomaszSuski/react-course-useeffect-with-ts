@@ -16,8 +16,9 @@ import africanSavannaImg from './assets/african-savanna.jpg';
 import victoriaFallsImg from './assets/victoria-falls.jpg';
 import machuPicchuImg from './assets/machu-picchu.jpg';
 import amazonRiverImg from './assets/amazon-river.jpg';
+import { Place } from './models/Place';
 
-export const AVAILABLE_PLACES = [
+export const AVAILABLE_PLACES: Place[] = [
   {
     id: 'p1',
     title: 'Forest Waterfall',
