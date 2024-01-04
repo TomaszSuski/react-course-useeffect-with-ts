@@ -1,4 +1,13 @@
-export default function Places({ title, places, fallbackText, onSelectPlace }) {
+import React from "react";
+
+export interface PlacesProps {
+  title: string;
+  places: any[];
+  fallbackText?: string;
+  onSelectPlace: (id: string) => void;
+}
+
+export default function Places({ title, places, fallbackText, onSelectPlace }: PlacesProps) {
   return (
     <section className="places-category">
       <h2>{title}</h2>
