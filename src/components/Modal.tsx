@@ -4,10 +4,11 @@ import { createPortal } from "react-dom";
 
 export interface ModalProps {
   open: boolean;
+  onClose: () => void;
   children: React.ReactNode;
 }
 
-function Modal({ open, children }: ModalProps) {
+function Modal({ open, onClose, children }: ModalProps) {
   const dialog = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
@@ -19,7 +20,7 @@ function Modal({ open, children }: ModalProps) {
   }, [open]);
 
   return createPortal(
-    <dialog className="modal" ref={dialog}>
+    <dialog className="modal" ref={dialog} onClose={onClose}>
       {children}
     </dialog>,
     document.getElementById("modal")!
