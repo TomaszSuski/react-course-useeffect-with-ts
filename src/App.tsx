@@ -7,30 +7,38 @@ import DeleteConfirmation from "./components/DeleteConfirmation";
 import logoImg from "./assets/logo.png";
 import { sortPlacesByDistance } from "./loc";
 
+const storedIds: string[] = localStorage.getItem("pickedPlaceIds")
+  ? JSON.parse(localStorage.getItem("pickedPlaceIds")!)
+  : [];
+const storedPlaces: Place[] = storedIds.map((id) => {
+  const place = AVAILABLE_PLACES.find((place) => place.id === id);
+  return place;
+}) as Place[];
+
 function App() {
-  const modal = useRef<any>(null);
   const selectedPlace = useRef<any>(null);
-  const [pickedPlaces, setPickedPlaces] = useState<Place[]>([]);
+  const [pickedPlaces, setPickedPlaces] = useState<Place[]>(storedPlaces);
   const [availablePlaces, setAvailablePlaces] = useState<Place[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-  navigator.geolocation.getCurrentPosition((position) => {
-    const sortedPlaces = sortPlacesByDistance(
-      AVAILABLE_PLACES,
-      position.coords.latitude,
-      position.coords.longitude
-    );
-    setAvailablePlaces(sortedPlaces);
-  });
-}, [AVAILABLE_PLACES]);
+    navigator.geolocation.getCurrentPosition((position) => {
+      const sortedPlaces = sortPlacesByDistance(
+        AVAILABLE_PLACES,
+        position.coords.latitude,
+        position.coords.longitude
+      );
+      setAvailablePlaces(sortedPlaces);
+    });
+  }, [AVAILABLE_PLACES]);
 
   function handleStartRemovePlace(id: string) {
-    modal.current.open();
+    setIsModalOpen(true);
     selectedPlace.current = id;
   }
 
   function handleStopRemovePlace() {
-    modal.current.close();
+    setIsModalOpen(false);
   }
 
   function handleSelectPlace(id: string) {
@@ -44,18 +52,31 @@ function App() {
       }
       return [place, ...prevPickedPlaces];
     });
+
+    const storedIds: string[] = localStorage.getItem("pickedPlaceIds")
+      ? JSON.parse(localStorage.getItem("pickedPlaceIds")!)
+      : [];
+    if (storedIds.includes(id)) return;
+    localStorage.setItem("pickedPlaceIds", JSON.stringify([id, ...storedIds]));
   }
 
   function handleRemovePlace() {
     setPickedPlaces((prevPickedPlaces) =>
       prevPickedPlaces.filter((place) => place.id !== selectedPlace.current)
     );
-    modal.current.close();
+    const storedIds: string[] = localStorage.getItem("pickedPlaceIds")
+      ? JSON.parse(localStorage.getItem("pickedPlaceIds")!)
+      : [];
+    localStorage.setItem(
+      "pickedPlaceIds",
+      JSON.stringify(storedIds.filter((id) => id !== selectedPlace.current))
+    );
+    setIsModalOpen(false);
   }
 
   return (
     <>
-      <Modal ref={modal}>
+      <Modal open={isModalOpen}>
         <DeleteConfirmation
           onCancel={handleStopRemovePlace}
           onConfirm={handleRemovePlace}
